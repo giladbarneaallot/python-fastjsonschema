@@ -36,7 +36,15 @@ class JsonSchemaValueException(JsonSchemaException):
 
     @property
     def path(self):
-        return [item for item in SPLIT_RE.split(self.name) if item != '']
+        """['data', 'allowed_traffic', '', 'bytes_in'] ->
+        ['allowed_traffic', 'bytes_in']
+        """
+        pathlist = []
+        for i, part in enumerate(SPLIT_RE.split(self.name)):
+            if not part or (i == 0 and part == 'data'):
+                continue
+            pathlist.append(part)
+        return pathlist
 
     @property
     def rule_definition(self):
