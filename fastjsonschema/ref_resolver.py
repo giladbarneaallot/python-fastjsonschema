@@ -12,18 +12,19 @@ import re
 from urllib import parse as urlparse
 from urllib.parse import unquote
 from urllib.request import urlopen
+from typing import Union
 
 from .exceptions import JsonSchemaDefinitionException
 
 
-def get_id(schema):
+def get_id(schema: dict):
     """
     Originally ID was `id` and since v7 it's `$id`.
     """
     return schema.get('$id', schema.get('id', ''))
 
 
-def resolve_path(schema, fragment):
+def resolve_path(schema: Union[dict, list], fragment: str):
     """
     Return definition from path.
 
@@ -42,11 +43,11 @@ def resolve_path(schema, fragment):
     return schema
 
 
-def normalize(uri):
+def normalize(uri: str) -> str:
     return urlparse.urlsplit(uri).geturl()
 
 
-def resolve_remote(uri, handlers):
+def resolve_remote(uri: str, handlers: dict):
     """
     Resolve a remote ``uri``.
 
@@ -74,7 +75,7 @@ class RefResolver:
     """
 
     # pylint: disable=dangerous-default-value,too-many-arguments
-    def __init__(self, base_uri, schema, store={}, cache=True, handlers={}):
+    def __init__(self, base_uri: str, schema: dict, store={}, cache=True, handlers={}):
         """
         `base_uri` is URI of the referring document from the `schema`.
         """
@@ -136,10 +137,10 @@ class RefResolver:
         finally:
             self.base_uri, self.schema = old_base_uri, old_schema
 
-    def get_uri(self):
+    def get_uri(self) -> str:
         return normalize(self.resolution_scope)
 
-    def get_scope_name(self):
+    def get_scope_name(self) -> str:
         """
         Get current scope and return it as a valid function name.
         """
